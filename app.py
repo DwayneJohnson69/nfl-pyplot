@@ -40,7 +40,6 @@ fig.update_layout(
 
 #Create dash application
 app = dash.Dash(__name__, external_stylesheets = [dbc.themes.JOURNAL])
-server = app.server
 
 SIDEBAR_STYLE = {
     "position": "fixed",
@@ -489,6 +488,8 @@ def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis
 
     if n_clicks == None:
         return fig, None, selected_category, years, x_axis, y_axis, color, size
+
+server = app.server
 
 """
 if __name__ == '__main__': 
