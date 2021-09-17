@@ -9,7 +9,8 @@ import dash_bootstrap_components as dbc
 
 #load csv files in a dictionary based on category values
 player_df_dict = {}
-for category in ['passing',  'rushing', 'receiving', 'scrimmage', 'defense',  'kicking', 'returns', 'scoring']: 
+categories = ['passing',  'rushing', 'receiving', 'scrimmage', 'defense',  'kicking', 'returns', 'scoring']
+for category in categories: 
     path =  r'data/players/{}.csv'.format(category)
     player_df_dict[category] = pd.read_csv(path)
     for col in player_df_dict[category].columns:
@@ -61,7 +62,7 @@ CONTENT_STYLE = {
 
 sidebar = html.Div(
     [
-        html.H2("NFL STATISTICS", className="display-9", style = {'fontSize' : 43}),
+        html.H2("NFL-PYPLOT", className="display-9", style = {'fontSize' : 43}),
         html.Hr(),
         html.P(
             "Choose Plot Settings", className="lead"
@@ -486,6 +487,8 @@ def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis
         font_color=colors['text'],
     )
 
+    fig.show(config={"displayModeBar": False, "showTips": False})
+
     if n_clicks == None:
         return fig, None, selected_category, years, x_axis, y_axis, color, size
 
@@ -499,5 +502,6 @@ if __name__ == '__main__':
 To Do List
 Sliders show value for chosen number
 fix slider auto-resetting
-add team defense
+datapoint search input and highlighting
+size dropwdown cant see rows
 """
