@@ -490,9 +490,10 @@ def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis
     if n_clicks == None:
         return fig, None, selected_category, years, x_axis, y_axis, color, size
 
+"""
 if __name__ == '__main__': 
     app.run_server(debug = False)
-
+"""
 """
 To Do List
 Sliders show value for chosen number
