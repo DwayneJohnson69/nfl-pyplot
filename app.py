@@ -9,7 +9,7 @@ import dash_bootstrap_components as dbc
 
 #load csv files in a dictionary based on category values
 player_df_dict = {}
-categories = ['passing',  'rushing', 'receiving', 'scrimmage', 'defense',  'kicking', 'returns', 'scoring']
+categories = ['passing',  'rushing', 'receiving', 'scrimmage', 'defense', 'returns', 'scoring']
 for category in categories: 
     path =  r'data/players/{}.csv'.format(category)
     player_df_dict[category] = pd.read_csv(path)
@@ -17,7 +17,7 @@ for category in categories:
         player_df_dict[category][col] = pd.to_numeric(player_df_dict[category][col], errors = 'ignore')
 
 merged_df_dict = {}
-merged_table_ids = ['team_stats', 'passing', 'rushing', 'returns', 'kicking', 'team_scoring', 'team_conversions', 'drives']
+merged_table_ids = ['team_stats', 'passing', 'rushing', 'returns', 'team_scoring', 'team_conversions', 'drives']
 for table_id in merged_table_ids:
     path =  r'data/teams/merged_{}.csv'.format(table_id)
     merged_df_dict[table_id] = pd.read_csv(path)
@@ -242,7 +242,10 @@ content_player = [
             ),
             dcc.Graph(
                     id='graph_1',
-                    figure = fig
+                    figure = fig,
+                        config={
+                            'displayModeBar': False
+                        }
                 )
             ]
 
@@ -261,7 +264,10 @@ content_team = [
             ),
             dcc.Graph(
                     id='graph_1',
-                    figure = fig
+                    figure = fig,
+                    config={
+                            'displayModeBar': False
+                        }
             )
             ]
 
@@ -292,7 +298,6 @@ def update_category_dropdown(pathname):
         options = [
             {'label' : 'Conversions', 'value' : 'team_conversions'},
             {'label' : 'Drives', 'value' : 'drives'},
-            {'label' : 'Kicking', 'value' : 'kicking'},
             {'label' : 'Passing', 'value' : 'passing'},
             {'label' : 'Returns', 'value' : 'returns'},
             {'label' : 'Rushing', 'value' : 'rushing'},
@@ -306,7 +311,6 @@ def update_category_dropdown(pathname):
             {'label' : 'Receiving', 'value' : 'receiving'},
             {'label' : 'Scrimmage', 'value' : 'scrimmage'},
             {'label' : 'Defense', 'value' : 'defense'},
-            {'label' : 'Kicking', 'value' : 'kicking'},
             {'label' : 'Returns', 'value' : 'returns'},
             {'label' : 'Scoring', 'value' : 'scoring'}
             ]
@@ -321,10 +325,10 @@ def update_category_dropdown(pathname):
 def columns_for_df(selected_category, pathname):
     if pathname == '/team-statistics':
         df = merged_df_dict[selected_category]
-        return [{'label' : col, 'value': col} for col in df.columns[1:]]
+        return [{'label' : col, 'value': col} for col in df.columns[1:] if col not in ['Tm','Rk']]
     else:
         df = player_df_dict[selected_category]
-        return [{'label' : col, 'value': col} for col in df.columns[3:]]
+        return [{'label' : col, 'value': col} for col in df.columns[3:] if col not in ['Pos','G','GS']]
 
 @app.callback(
     Output(component_id = 'x-axis-range', component_property = 'min'),
@@ -363,10 +367,10 @@ def update_range_slider(selected_category, years, x_axis_col, pathname):
 def columns_for_df(selected_category, pathname):
     if pathname == '/team-statistics':
         df = merged_df_dict[selected_category]
-        return [{'label' : col, 'value': col} for col in df.columns[1:]]
+        return [{'label' : col, 'value': col} for col in df.columns[1:] if col not in ['Tm','Rk']]
     else:
         df = player_df_dict[selected_category]
-        return [{'label' : col, 'value': col} for col in df.columns[3:]]
+        return [{'label' : col, 'value': col} for col in df.columns[3:] if col not in ['Pos','G','GS']]
 @app.callback(
     Output(component_id = 'y-axis-range', component_property = 'min'),
     Output(component_id = 'y-axis-range', component_property = 'max'),
@@ -404,10 +408,10 @@ def update_range_slider(selected_category, years, y_axis_col, pathname):
 def columns_for_df(selected_category, pathname):
     if pathname == '/team-statistics':
         df = merged_df_dict[selected_category]
-        return [{'label' : col, 'value': col} for col in df.columns[1:]]
+        return [{'label' : col, 'value': col} for col in df.columns[1:] if col not in ['Tm','Rk']]
     else:
         df = player_df_dict[selected_category]
-        return [{'label' : col, 'value': col} for col in df.columns[3:]]
+        return [{'label' : col, 'value': col} for col in df.columns[3:] if col not in ['Pos','G','GS']]
 
 #create callback for size using columns of selected category
 @app.callback(
@@ -418,10 +422,10 @@ def columns_for_df(selected_category, pathname):
 def columns_for_df(selected_category, pathname):
     if pathname == '/team-statistics':
         df = merged_df_dict[selected_category]
-        return [{'label' : col, 'value': col} for col in df.columns[1:]]
+        return [{'label' : col, 'value': col} for col in df.columns[1:] if col not in ['Tm','Rk']]
     else:
         df = player_df_dict[selected_category]
-        return [{'label' : col, 'value': col} for col in df.columns[3:]]
+        return [{'label' : col, 'value': col} for col in df.columns[3:] if col not in ['Pos','G','GS']]
 
 #plot scatter figure based on inputted variables
 @app.callback(
@@ -484,10 +488,10 @@ def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis
     fig.update_layout(
         plot_bgcolor = 'rgba(0, 0, 0, 0)',
         paper_bgcolor = 'rgba(0, 0, 0, 0)',
-        font_color=colors['text'],
+        font_color=colors['text']
     )
 
-    fig.show(config={"displayModeBar": False, "showTips": False})
+    #fig.show(config={"displayModeBar": False, "showTips": False})
 
     if n_clicks == None:
         return fig, None, selected_category, years, x_axis, y_axis, color, size
