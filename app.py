@@ -40,7 +40,7 @@ fig.update_layout(
     )
 
 #Create dash application
-app = dash.Dash(__name__, external_stylesheets = [dbc.themes.JOURNAL])
+app = dash.Dash(__name__, title = 'NFL-PYPLOT', external_stylesheets = [dbc.themes.JOURNAL])
 
 SIDEBAR_STYLE = {
     "position": "fixed",
