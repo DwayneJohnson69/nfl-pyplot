@@ -463,7 +463,7 @@ def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis
         df = merged_df_dict[selected_category]
         player_team = 'Team'
         hover_name = 'Tm'
-        hover_data = ['Tm', 'Year']
+        hover_data = ['Year']
     else:
         df = player_df_dict[selected_category]
         player_team = 'Player'
