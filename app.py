@@ -6,23 +6,26 @@ import plotly.express as px
 import numpy as np
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
+import dash_table
 
-#load csv files in a dictionary based on category values
-player_df_dict = {}
-categories = ['passing',  'rushing', 'receiving', 'scrimmage', 'defense', 'returns', 'scoring']
-for category in categories: 
-    path =  r'data/players/{}.csv'.format(category)
-    player_df_dict[category] = pd.read_csv(path)
-    for col in player_df_dict[category].columns:
-        player_df_dict[category][col] = pd.to_numeric(player_df_dict[category][col], errors = 'ignore')
+#load csv files in dictionaries for player and merged team data
+def load_df_dict(type, table_ids):
+    df_dict = {}
+    for table_id in table_ids:
+        if type in ['player']:
+            path = r'data/players/{}.csv'.format(table_id)
+        if type in ['merged']:
+            path =  r'data/teams/merged_{}.csv'.format(table_id)
+        df_dict[table_id] = pd.read_csv(path)
+        for col in df_dict[table_id].columns:
+            df_dict[table_id][col] = pd.to_numeric(df_dict[table_id][col], errors = 'ignore')
+    return df_dict
 
-merged_df_dict = {}
+player_table_ids = ['passing',  'rushing', 'receiving', 'scrimmage', 'defense', 'returns', 'scoring']
+player_df_dict = load_df_dict('player', player_table_ids)
+
 merged_table_ids = ['team_stats', 'passing', 'rushing', 'returns', 'team_scoring', 'team_conversions', 'drives']
-for table_id in merged_table_ids:
-    path =  r'data/teams/merged_{}.csv'.format(table_id)
-    merged_df_dict[table_id] = pd.read_csv(path)
-    for col in merged_df_dict[table_id].columns:
-        merged_df_dict[table_id][col] = pd.to_numeric(merged_df_dict[table_id][col], errors = 'ignore')
+merged_df_dict = load_df_dict('merged', merged_table_ids)
 
 #set dict for color schemes
 colors = {
