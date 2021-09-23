@@ -8,6 +8,7 @@ import numpy as np
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import dash_table
+from PIL import Image
 
 #load csv files in dictionaries for player and merged team data
 def load_df_dict(type, table_ids):
@@ -801,16 +802,15 @@ def columns_for_df(selected_category, pathname):
 )
 def pop_search(pathname, category, years):
     if pathname in ['/', '/player-statistics']:
-        print('ballsacks')
         df = player_df_dict[category]
         dff = df[df['Year'].isin(years)]
         player_options = [{'label': name, 'value' : name} for name in dff['Player'].unique()]
-        team_options = {'label': 'No Year Selected', 'value' : None}
+        team_options = [{'label': 'No Year Selected', 'value' : None}]
         return player_options, team_options
     elif pathname in ['/team-statistics']:
         df = merged_df_dict[category]
         dff = df[df['Year'].isin(years)]
-        player_options = {'label': 'No Year Selected', 'value' : None}
+        player_options = [{'label': 'No Year Selected', 'value' : None}]
         team_options = [{'label': team, 'value' : team} for team in dff['Tm'].unique()]
         return player_options, team_options
 
@@ -851,11 +851,13 @@ def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis
             player_team = 'Team'
             hover_name = 'Tm'
             hover_data = ['Year']
+            df['split'] = df['Tm'].str.split().str[-1]
         else:
             df = player_df_dict[selected_category]
             player_team = 'Player'
             hover_name = 'Player'
             hover_data = ['Tm', 'Year', 'Pos']
+            df['split'] = df['Player'].str.split().str[-1]
 
         df = df[df['Year'].isin(years)]
         df = df[df[x_axis] >= x_axis_values[0]]
@@ -869,6 +871,7 @@ def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis
             hover_name = hover_name, hover_data = hover_data,
             title = 'NFL {} {} Stats for {} Scatter plot of {} against {}'.format(player_team, selected_category, years, x_axis, y_axis),
             color = color, size = size,
+            text = 'split',
             color_continuous_scale='Bluered'
         )
 
@@ -1072,11 +1075,11 @@ def update_compare_figures(year_1, year_2, team_1_name, team_2_name, pass_x, pas
     return pass_fig, rush_fig, drives_fig, team_stats_fig, columns, data
 
 
-server = app.server
-"""
+#server = app.server
+
 if __name__ == '__main__': 
     app.run_server(debug = False)
-"""
+
 """
 To Do List
 Sliders show value for chosen number
