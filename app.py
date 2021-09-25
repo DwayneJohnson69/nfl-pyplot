@@ -319,7 +319,7 @@ sidebar_team_compare = [
                         {'label' : col, 'value': col} for col in merged_df_dict['passing'].columns[1:] if col not in ['Tm','Rk']
                 ],
                 placeholder = 'X-Axis Data',
-                value = 'Yds',
+                value = 'Y/A',
                 style = {'width' : "50%", 
                         'height' : "28px",
                         'font-size': '12px',
@@ -332,7 +332,7 @@ sidebar_team_compare = [
                         {'label' : col, 'value': col} for col in merged_df_dict['passing'].columns[1:] if col not in ['Tm','Rk']
                 ],
                 placeholder = 'Y-Axis Data',
-                value = 'opp_Yds',
+                value = 'opp_Y/A',
                 style = {'width' : "50%", 
                         'height' : "28px",
                         'font-size': '12px',
@@ -356,7 +356,7 @@ sidebar_team_compare = [
                         {'label' : col, 'value': col} for col in merged_df_dict['rushing'].columns[1:] if col not in ['Tm','Rk']
                 ],
                 placeholder = 'X-Axis Data',
-                value = 'Yds',
+                value = 'Y/A',
                 style = {'width' : "50%", 
                         'height' : "28px",
                         'font-size': '12px',
@@ -369,7 +369,7 @@ sidebar_team_compare = [
                         {'label' : col, 'value': col} for col in merged_df_dict['rushing'].columns[1:] if col not in ['Tm','Rk']
                 ],
                 placeholder = 'Y-Axis Data',
-                value = 'opp_Yds',
+                value = 'opp_Y/A',
                 style = {'width' : "50%", 
                         'height' : "28px",
                         'font-size': '12px',
@@ -503,6 +503,14 @@ content_player = [
             html.P(
             "Player Statistics", className="lead", style = {'fontSize' : 50, 'color' : 'black'}
             ),
+
+            dcc.Graph(
+                    id='graph_1',
+                    figure = fig,
+                        config={
+                            'displayModeBar': False
+                        }
+            ),
             html.P(
                 "Player Search"
             ),
@@ -516,14 +524,7 @@ content_player = [
                         },
                 multi = True,
                 options = [
-                    {'label':'No Category Selected', 'value': None}],
-            ),
-            dcc.Graph(
-                    id='graph_1',
-                    figure = fig,
-                        config={
-                            'displayModeBar': False
-                        }
+                    {'label':'Select Category and Year', 'value': None}],
             ),
 ]
 
@@ -541,6 +542,13 @@ content_team = [
             html.P(
             "Team Statistics", className="lead", style = {'fontSize' : 50, 'color' : 'black'}
             ),           
+            dcc.Graph(
+                    id='graph_1',
+                    figure = fig,
+                    config={
+                            'displayModeBar': False
+                        }
+            ),
             html.P(
                 "Team Search"
             ),
@@ -554,14 +562,7 @@ content_team = [
                         },
                 multi = True,
                 options = [
-                    {'label':'No Category Selected', 'value': None}],
-            ),
-            dcc.Graph(
-                    id='graph_1',
-                    figure = fig,
-                    config={
-                            'displayModeBar': False
-                        }
+                    {'label':'Select Category and Year', 'value': None}],
             ),
 ]
 #content for team comparison   
@@ -797,9 +798,10 @@ def columns_for_df(selected_category, pathname):
     Output(component_id = 'team-search-dropdown', component_property = 'options'),
     Input(component_id= 'url', component_property= 'pathname'),
     Input(component_id = 'category_dropdown', component_property = 'value'),
-    Input(component_id = 'year', component_property = 'value'),
+    Input(component_id = 'year', component_property = 'value')
 )
-def pop_search(pathname, category, years):
+def pop_search_dropdown(pathname, category, years):
+    print('working')
     if pathname in ['/', '/player-statistics']:
         df = player_df_dict[category]
         dff = df[df['Year'].isin(years)]
@@ -868,7 +870,7 @@ def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis
             df,
             x = x_axis, y = y_axis, 
             hover_name = hover_name, hover_data = hover_data,
-            title = 'NFL {} {} Stats for {} Scatter plot of {} against {}'.format(player_team, selected_category, years, x_axis, y_axis),
+            title = 'NFL {} {} Stats for {} Scatter plot of {} against {}'.format(player_team, selected_category.title(), years, x_axis.title(), y_axis.title()),
             color = color, size = size,
             text = 'split',
             color_continuous_scale='Bluered'
