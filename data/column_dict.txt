@@ -1,0 +1,156 @@
+PLAYERS
+
+DATAFRAME
+Defense
+
+COLUMNS
+player_def_dict = {'Player' : 'Player',	'Tm' : 'Team', 'Age' : 'Age', 'Pos': 'Position', 'G' : 'Games',	'GS' : 'Games Started',	'Int' : 'Interceptions', 
+	'Yds' :'Yards', 'TD' : 'Int Touchdowns', 'Lng' :'Int Return Long',	'PD' : 'Passes Defended', 'FF' : 'Forced Fumbles', 'Fmb' : 'Fumbles', 'FR' :'Fumbles Recovered',
+    'Yds.1' : 'Fumb Recovery Yards', 'TD.1' : 'Fumb Touchdowns', 'Sk' :'Sacks',	'Comb' :'Combined Tackles',	'Solo' :'Solo Tackles',
+    	'Ast' :'Tackle Assists', 'TFL':'Tackles for Loss', 'QBHits' :'QB Hits',
+        	'Sfty': 'Safeties',	'Year' : 'Year'}
+
+DATAFRAME
+Kicking
+
+COLUMNS
+	{'Player':  'Player', 'Tm':'Team','Age':'Age','Pos':'Position','G':'Games','GS':'Games Started',	FGA	FGM	FGA	FGM	FGA	FGM	FGA	FGM	FGA	FGM	FGA	FGM	Lng	FG_perc	XPA	XPM	XP_perc	KO	KOYds	TB	TB_perc	KOAvg	Pnt	Yds	Lng	Blck	Y/P	Year
+    player_kicking_dict = {'Player' : 'Player',	'Tm' : 'Team', 'Age' : 'Age', 'Pos': 'Position', 'G' : 'Games',	'GS' : 'Games Started',	
+
+DATAFRAME
+passing
+
+COLUMNS
+	{'Player':  'Player', 'Tm':'Team','Age':'Age','Pos':'Position','G':'Games','GS':'Games Started',
+    'QBrec':'QB Record','Cmp':'Completions','Att':'Attempts','Cmp_perc':'Completion %','Yds':'Yards',
+    'TD':'Touchdowns','TD_perc':'Touchdown %','Int':'Interceptions','Int_perc':'Interception %','1D':'First Downs',
+    'Lng':'Long','Y/A':'Yards per Attempt','AY/A':'Air Yards per Attempt','Y/C':'Yards per Catch','Y/G':'Yards per Game',
+    'Rate':'Rating','QBR':'QBR','Sk':'Sacks','Yds.1':'Sack Yards','NY/A':'Net Yards per Attempt','ANY/A':'Adj Net Yards per Attempt',
+    	'Sk_perc':'Sack Rate','4QC':'4th Quarter Comebacks','GWD':'Game Winning Drives','Year':'Year'}
+
+DATAFRAME
+receiving
+
+COLUMNS
+	{'Player':'Player', 'Tm':'Team','Age':'Age','Pos':'Position','G':'Games','GS':'Games Started','Tgt':'Targets','Rec':'Receptions', 'Ctch_perc':'Catch Percentage',	
+    'Yds':'Yards','Y/R':'Yards per Reception','TD':'Touchdowns','1D':'1st Downs','Lng':'Long', 'Y/Tgt','Yards per Target',
+    	'R/G':'Receptions per Game','Y/G':'Yards per Game','Fmb':'Fumbles',	'Year':'Year}
+
+DATAFRAME
+returns
+
+COLUMNS
+	{'Player':  'Player', 'Tm':'Team','Age':'Age','Pos':'Position','G':'Games','GS':'Games Started',	
+    Ret	Yds	TD	Lng	Y/R	Rt	Yds	TD	Lng	Y/Rt	APYd	, 'Year' : 'Year'}
+
+DATAFRAME
+rushing
+
+COLUMNS
+	{'Player':  'Player', 'Tm':'Team','Age':'Age','Pos':'Position','G':'Games','GS':'Games Started',	
+    Att	Yds	TD	1D	Lng	Y/A	Y/G	Fmb	, 'Year' : 'Year'}
+
+DATAFRAME
+scoring
+
+COLUMNS
+	{'Player':  'Player', 'Tm':'Team','Age':'Age','Pos':'Position','G':'Games','GS':'Games Started',	
+    RshTD	RecTD	PR TD	KR TD	FblTD	IntTD	OthTD	AllTD	2PM	2PA	XPM	XPA	FGM	FGA	Sfty	Pts	Pts/G	, 'Year' : 'Year'}
+
+DATAFRAME
+scrimmage
+
+COLUMNS
+	{'Player':  'Player', 'Tm':'Team','Age':'Age','Pos':'Position','G':'Games','GS':'Games Started',	
+    Tgt	Rec	Yds	Y/R	TD	1D	Lng	R/G	Y/G	Ctch_perc	Y/Tgt	Att	Yds	TD	1D	Lng	Y/A	Y/G	A/G	Touch	Y/Tch	
+    YScm	RRTD	Fmb	, 'Year' : 'Year'}
+
+TEAMS
+
+DATAFRAME
+merged_drives
+
+COLUMNS
+	{'Tm' :'Team', 'Year' : 'Year','Rk':'Rank','G':'Games','#Dr','Num Drives','Plays':'Plays','Sc_perc':'Score %','TO_perc':'TO %',	
+    'Plays.1':'Plays per Drive','Yds':'Yards per Drive','Start':'Starting Position','Time':'Time per Drive',	
+    'Pts':'Points per Drive','opp_Rk','Def Rank', 'opp_G':'Def Games', 'opp_#Dr':'Def Num Drives',
+    'opp_Plays':'Def Plays','opp_Sc_perc':'Def Score %','opp_TO_perc':'Def TO %','opp_Plays':'Def Plays per Drive',
+    	'opp_Yds':'Def Yards per Drive','opp_Start':'Def Starting Pos','opp_Time':'Def Time per Drive','opp_Pts':'Def Pts per Drive'}
+
+DATAFRAME
+merged_kicking
+
+COLUMNS
+	{'Tm' :'Team', 'Year' : 'Year','Rk':'Rank','G':'Games',	FGA	FGM	FGA	FGM	FGA	FGM	FGA	FGM	FGA	FGM	FGA	FGM	Lng	FG_perc	XPA	XPM	XP_perc	KO	KOYds	TB	TB_perc	KOAvg	Pnt	Yds	Lng	Blck	Y/P	'opp_Rk':'Def Rank','opp_G':'Def Games',	opp_FGA	opp_FGM	opp_FG_perc	opp_XPA	opp_XPM	opp_XP_perc	opp_Pnt	opp_Yds	opp_Blck	opp_Y/P
+
+DATAFRAME
+merged_passing
+
+COLUMNS
+	{'Tm' :'Team', 'Year' : 'Year','Rk':'Rank','G':'Games',	'Cmp':'Completions','Att','Attempts','Cmp_perc':'Completion %',	'Yds':'Yards','TD':'Touchdowns',
+    	'TD_perc':'Touchdown %','Int':'Interceptions','Int_perc':'Interception %','Lng':'Long',	'Y/A':'Yards per Att',
+        'AY/A':'Air Yards per Att','Y/C':'Yards per Catch','Y/G':'Yards per Game','Rate':'Rating','Sk':'Sacks','Yds.1':'Sack Yards',
+        	'NY/A':'Net Yds per Att','ANY/A':'Adj Net Yds per Att',	'Sk_perc':'Sack %',	'4QC':'4th Quarter Comebacks',
+            	'GWD':'Game Winning Drives','EXP':'Expected Pts Added',	
+                'opp_Rk':'Def Rank','opp_G':'Def Games','opp_Cmp':'Def Completions',
+                'opp_Att':'Def Attempts','opp_Cmp_perc':'Def Completion %','opp_Yds':'Def Yards',
+                'opp_TD':'Def Touchdowns','opp_TD_perc':'Def Touchdown %','opp_Int':'Def Intercepetions',	
+                'opp_PD':'Def Passes Defended','opp_Int_perc':'Def Interception %','opp_Y/A':'Def Yards per Attempt',
+                'opp_AY/A':'Def Yards per Att','opp_Y/C':'Def Yards per Catch','opp_Y/G':'Def Yards per Game',
+                'opp_Rate':'Def QB Rating','opp_Sk':'Def Sacks','opp_Yds':'Def Yards','opp_QBHits':'Def QB Hits',	
+                'opp_TFL',:'Def Tackles for Loss','opp_NY/A':'Def Net Yds per Att',
+                'opp_ANY/A':'Def Adj Net Yds per Att','opp_Sk_perc':'Def Sack %','opp_EXP':'Def EPA'}
+
+DATAFRAME
+merged_returns
+
+COLUMNS
+	{'Tm' :'Team', 'Year' : 'Year','Rk':'Rank','G':'Games',	'GS':'Games Started', 'Ret':'Punt Returns',
+    'Yds':'Punt Return Yards','TD':'Punt Rt Touchdowns',	
+    'Lng':'Punt Long','Y/R':'Punt Yds per Return','Rt':'Kick Returns','Yds.1':'Kick Rt Yds','TD':'Kick Rt Touchdowns',
+    	'Lng.1':'Kick Rt Long',	'Y/Rt':'Yds per Kick Rt','APYd'	:'All-purpose Yds', 
+        'opp_Rk':'Def Rank','opp_G':'Def Games','opp_Ret':'Def Punt Returns','opp_Yds':'Def Punt Return Yds','opp_TD':'Def Punt Rt TDs',
+    'opp_Y/R':'Def Yds per Punt Rt','opp_Rt':'Def Kick Returns','opp_Yds':'Def Kick Rt Yds','opp_TD':'Def Kick Rt TDs',
+    'opp_Y/Rt':'Def Yds per Kick Rt'}
+
+DATAFRAME
+merged_team_conversions
+
+COLUMNS
+	{'Tm' :'Team', 'Year' : 'Year','Rk':'Rank','G':'Games',	'3DAtt':'3rd Down Atts','3DConv':'3rd Down Conveersions',
+    '3D_perc':'3rd Down Conv%',	'4DAtt':'4th Down Atts','4DConv':'4th Down Conversions',
+    '4D_perc':'4th Down Conv%','RZAtt':'RedZone Atts','RZTD':'RedZone TDs','RZPct':'RedZone %',
+    	'opp_Rk':'Def Rank','opp_G':'Def Games',	
+        'opp_3DAtt':'Def 3rd Down Atts','opp_3DConv':'Def 3rd Down Conversions','opp_3D_perc':'Def 3rd Down Conv %',
+        	'opp_4DAtt':'Def 4th Down Atts','opp_4DConv':'Def 4th Down Conversions','opp_4D_perc':'Def 4th Down Conv %',
+            	'opp_RZAtt':'Def RedZone Atts','opp_RZTD':'Def RedZone TDs','opp_RZPct':'Def RedZone %'}
+
+DATAFRAME
+merged_team_scoring
+
+COLUMNS
+	{'Tm' :'Team', 'Year' : 'Year','Rk':'Rank','G':'Games',	'RshTD':'Rush TDs',	'RecTD':'Rec TDs',
+    'PR TD':'Punt Rt TDs','KR TD':'Kick Rt TDs','FblTD':'Fumb TDs','IntTD':'Pick Six',
+    	'OthTD':'Other TDs','AllTD':'All TDs','2PM':'2pt Made',
+        '2PA':'2pt Atts','XPM':'Extra Pts Made','XPA':'Extra Pts Atts',
+        	'FGM':'Field Goals Made','FGA':'Field Goals Atts','Sfty':'Safeties',
+            	'Pts':'Points','Pts/G':'Points per Game','D2P':'Def 2pt Conversions',
+                	'opp_Rk':'Def Rank','opp_G':'Def Games','opp_RshTD':'Def Rush TDs', 'opp_RecTD':'Def Receiving TDs',
+                    'opp_PR TD':'Def Punt Rt TDs','opp_KR TD':'Def Kick Rt TDs','opp_FblTD':'Def Fumble TDs',
+                    'opp_IntTD':'Def Pick Sixes','opp_OthTD':'Def Other TDs','opp_AllTD':'Def All TDs',
+                    'opp_2PM':'Def 2 Pts Made','opp_2PA':'Def 2pt Atts','opp_XPM':'Def Extra Pts Made','opp_XPA':'Def Extra Pts Atts',
+                    	'opp_FGM':'Def Field Goals Made','opp_FGA':'Def Field Goals Attempted','opp_Sfty':'Def Safeties',
+                        'opp_Pts':'Def Pts','opp_Pts/G':'Def Pts per Game'}
+
+DATAFRAME
+merged_rushing
+
+COLUMNS
+	{'Tm' :'Team', 'Year' : 'Year','Rk':'Rank','G':'Games',	Att	Yds	TD	Lng	Y/A	Y/G	Fmb	EXP	'opp_Rk':'Def Rank','opp_G':'Def Games',	opp_Att	opp_Yds	opp_TD	opp_Y/A	opp_Y/G	opp_EXP
+
+DATAFRAME
+merged_team_stats
+
+COLUMNS
+	{'Tm' :'Team', 'Year' : 'Year','Rk':'Rank','G':'Games',	PF	Yds	Ply	Y/P	TO	FL	1stD	Cmp	Att	Yds	TD	Int	NY/A	1stD	Att	Yds	TD	Y/A	1stD	Pen	Yds	1stPy	Sc_perc	TO_perc	EXP	'opp_Rk':'Def Rank','opp_G':'Def Games',	opp_PF	opp_Yds	opp_Ply	opp_Y/P	opp_TO	opp_FL	opp_1stD	opp_Cmp	opp_Att	opp_Yds	opp_TD	opp_Int	opp_NY/A	opp_1stD	opp_Att	opp_Yds	opp_TD	opp_Y/A	opp_1stD	opp_Pen	opp_Yds	opp_1stPy	opp_Sc_perc	opp_TO_perc	opp_EXP
+

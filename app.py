@@ -680,7 +680,30 @@ def update_category_dropdown(pathname):
             {'label' : 'Scoring', 'value' : 'scoring'}
             ]
     return options
-        
+
+#populate search dropdowns
+@app.callback(
+    Output(component_id = 'player-search-dropdown', component_property = 'options'),
+    Output(component_id = 'team-search-dropdown', component_property = 'options'),
+    Input(component_id = 'category_dropdown', component_property = 'value'),
+    Input(component_id = 'year', component_property = 'value'),
+    Input(component_id= 'url', component_property= 'pathname'),
+)
+def pop_search_dropdown(category, years, pathname):
+    print('triggered')
+    if pathname in ['/', '/player-statistics']:
+        df = player_df_dict[category]
+        dff = df[df['Year'].isin(years)]
+        player_options = [{'label': name, 'value' : name} for name in dff['Player'].unique()]
+        team_options = [{'label': 'No Year Selected', 'value' : None}]
+        return player_options, team_options
+    elif pathname in ['/team-statistics']:
+        df = merged_df_dict[category]
+        dff = df[df['Year'].isin(years)]
+        player_options = [{'label': 'No Year Selected', 'value' : None}]
+        team_options = [{'label': team, 'value' : team} for team in dff['Tm'].unique()]
+        return player_options, team_options
+
 #create callback for x-axis data using columns of selected category
 @app.callback(
     Output(component_id = 'x-axis', component_property = 'options'),
@@ -792,29 +815,6 @@ def columns_for_df(selected_category, pathname):
         df = player_df_dict[selected_category]
         return [{'label' : col, 'value': col} for col in df.columns[3:] if col not in ['Pos','G','GS']]
 
-#populate search dropdowns
-@app.callback(
-    Output(component_id = 'player-search-dropdown', component_property = 'options'),
-    Output(component_id = 'team-search-dropdown', component_property = 'options'),
-    Input(component_id= 'url', component_property= 'pathname'),
-    Input(component_id = 'category_dropdown', component_property = 'value'),
-    Input(component_id = 'year', component_property = 'value')
-)
-def pop_search_dropdown(pathname, category, years):
-    print('working')
-    if pathname in ['/', '/player-statistics']:
-        df = player_df_dict[category]
-        dff = df[df['Year'].isin(years)]
-        player_options = [{'label': name, 'value' : name} for name in dff['Player'].unique()]
-        team_options = [{'label': 'No Year Selected', 'value' : None}]
-        return player_options, team_options
-    elif pathname in ['/team-statistics']:
-        df = merged_df_dict[category]
-        dff = df[df['Year'].isin(years)]
-        player_options = [{'label': 'No Year Selected', 'value' : None}]
-        team_options = [{'label': team, 'value' : team} for team in dff['Tm'].unique()]
-        return player_options, team_options
-
 #plot scatter figure based on inputted variables
 @app.callback(
     Output(component_id = 'graph_1', component_property = 'figure'),
@@ -870,10 +870,10 @@ def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis
             df,
             x = x_axis, y = y_axis, 
             hover_name = hover_name, hover_data = hover_data,
-            title = 'NFL {} {} Stats for {} Scatter plot of {} against {}'.format(player_team, selected_category.title(), years, x_axis.title(), y_axis.title()),
-            color = color, size = size,
+            title = 'NFL {} {} Stats <br>   Year(s):{}<br>  {} against {}'.format(player_team, selected_category.title(), years, x_axis.title(), y_axis.title()),
+            color = color, size = color,
             text = 'split',
-            color_continuous_scale='Bluered'
+            color_continuous_scale='blackbody_r'
         )
 
         fig.update_layout(
@@ -953,7 +953,7 @@ def update_compare_figures(year_1, year_2, team_1_name, team_2_name, pass_x, pas
         color = pass_x,
         size = pass_y,
         text = 'Tm',
-        color_continuous_scale='Bluered'
+        color_continuous_scale='blackbody_r'
     )
     pass_fig.update_layout(
         plot_bgcolor = 'rgba(0, 0, 0, 0)',
@@ -985,7 +985,7 @@ def update_compare_figures(year_1, year_2, team_1_name, team_2_name, pass_x, pas
         color = rush_x,
         size = rush_y,
         text = 'Tm',
-        color_continuous_scale='Bluered'
+        color_continuous_scale='blackbody_r'
     )
     rush_fig.update_layout(
         plot_bgcolor = 'rgba(0, 0, 0, 0)',
@@ -1016,7 +1016,7 @@ def update_compare_figures(year_1, year_2, team_1_name, team_2_name, pass_x, pas
         color = drive_x,
         size = drive_y,
         text = 'Tm',
-        color_continuous_scale='Bluered'
+        color_continuous_scale='blackbody_r'
     )
     drives_fig.update_layout(
         plot_bgcolor = 'rgba(0, 0, 0, 0)',
@@ -1047,7 +1047,7 @@ def update_compare_figures(year_1, year_2, team_1_name, team_2_name, pass_x, pas
         color = ov_x,
         size = ov_y,
         text = 'Tm',
-        color_continuous_scale='Bluered'
+        color_continuous_scale='blackbody_r'
     )
     team_stats_fig.update_layout(
         plot_bgcolor = 'rgba(0, 0, 0, 0)',
@@ -1077,7 +1077,6 @@ def update_compare_figures(year_1, year_2, team_1_name, team_2_name, pass_x, pas
 
 
 server = app.server
-
 """
 if __name__ == '__main__': 
     app.run_server(debug = False)
