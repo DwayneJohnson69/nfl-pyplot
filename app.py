@@ -83,7 +83,7 @@ sidebar_individual = [
         html.H2("NFL-PYPLOT", className="display-9", style = {'fontSize' : 43}),
         html.Hr(),
         html.P(
-            "Choose Plot Settings", className="lead"
+            "Choose Plot Settings:", className="lead"
         ),
         dbc.Nav(
             [
@@ -136,18 +136,13 @@ sidebar_individual = [
                                         }
                             ),
                 html.P('''
-                Filter Data Range:
+                Filter X-Axis Range:
                 ''',                   
                     style = {'marginBottom' : '0',
                             'fontSize' : 10
                             }),
                 dcc.RangeSlider(
                     id = 'x-axis-range',
-                    min = None,
-                    max = None,
-                    marks={
-                    },
-                    allowCross = False
                 ),
 
                 #Y-AXIS DATA SELECTION   
@@ -159,15 +154,15 @@ sidebar_individual = [
                 dcc.Dropdown(id = 'y-axis',
                             options = [
                                 {'label':'No Category Selected', 'value': 'No Category Selected'}],
-                                placeholder = 'Y-Axis Data',
-                                 style = {'width' : "80%", 
-                                        'height' : "28px",
-                                        'font-size': '15px',
-                                        'display' : 'inline-block'
-                                        }
-                            ),
+                            placeholder = 'Y-Axis Data',
+                            style = {'width' : "80%", 
+                                'height' : "28px",
+                                'font-size': '15px',
+                                'display' : 'inline-block'
+                            }
+                ),
                 html.P('''
-                    Filter Data Range:
+                    Filter Y-Axis Range:
                     ''',                   
                     style = {'marginBottom' : '0',
                             'fontSize' : 10
@@ -176,42 +171,61 @@ sidebar_individual = [
                 dcc.RangeSlider(
                     id = 'y-axis-range',
                 ),
+                dbc.Nav([
+                #COLOR/SIZE DATAPOINT BY STAT
+                    html.P(
+                        '''Color''',
+                        style = {'marginBottom' : '0',
+                        'marginRight' : '85px'
+                        }
+                    ), 
+                    html.P(
+                        '''Size''',
+                        style = {'marginBottom' : '0'
+                                }
+                    ),
+                ], vertical = False), 
+                dbc.Nav([
+                    dcc.Dropdown(id = 'color',
+                                options = [
+                                    {'label':'No Category Selected', 'value': 'No Category Selected'}],
+                                    placeholder = 'Color',
+                                    style = {'width' : "50%", 
+                                            'height' : "28px",
+                                            'font-size': '12px',
+                                            'display' : 'inline-block'
+                                            },
+                                ),
+                    dcc.Dropdown(id = 'size',
+                                options = [
+                                    {'label':'No Category Selected', 'value': 'No Category Selected'}],
+                                    placeholder = 'Size',
+                                    style = {'width' : "50%", 
+                                            'height' : "28px",
+                                            'font-size': '12px',
+                                            'display' : 'inline-block'
+                                            },
+                                ),
+                ], vertical = 'False'),
 
-                #COLOR DATAPOINT BY STAT
-                html.P(
-                    '''Color Datapoints''',
-                    style = {'marginBottom' : '0'
-                            }
-                ), 
-                dcc.Dropdown(id = 'color',
-                            options = [
-                                {'label':'No Category Selected', 'value': 'No Category Selected'}],
-                                placeholder = 'Data Color',
-                                style = {'width' : "80%", 
-                                        'height' : "28px",
-                                        'font-size': '15px',
-                                        'display' : 'inline-block'
-                                        },
-                            ),
-                
-                #SIZE DATAPOINT BY STAT
-                html.P(
-                    '''Size Datapoints''',
-                    style = {'marginBottom' : '0'
-                            }
-                ), 
-                dcc.Dropdown(id = 'size',
-                            options = [
-                                {'label':'No Category Selected', 'value': 'No Category Selected'}],
-                                placeholder = 'Data Size',
-                                style = {'width' : "80%", 
-                                        'height' : "28px",
-                                        'font-size': '15px',
-                                        'display' : 'inline-block'
-                                        },
-                            ),
                 html.P('''
                 '''
+                ),
+                html.P(
+                "Search",
+                    style = {'marginBottom' :'0px'
+                    }
+                ),
+                dcc.Dropdown(
+                    id = 'search-dropdown',
+                    style = {'width' : "95%", 
+                            'height' : "28px",
+                            'font-size': '15px',
+                            'marginBottom' : '40px'
+                            },
+                    multi = True,
+                    options = [
+                        {'label':'Select Category and Year', 'value': None}],
                 ),
                 html.Button(
                     'Clear Selections',
@@ -511,21 +525,6 @@ content_player = [
                             'displayModeBar': False
                         }
             ),
-            html.P(
-                "Player Search"
-            ),
-            dcc.Dropdown(
-                id = 'player-search-dropdown',
-                style = {'width' : "40%", 
-                        'height' : "28px",
-                        'font-size': '15px',
-                        'display' : 'inline-block',
-                        'marginBottom' : '5px'
-                        },
-                multi = True,
-                options = [
-                    {'label':'Select Category and Year', 'value': None}],
-            ),
 ]
 
 content_team = [
@@ -548,21 +547,6 @@ content_team = [
                     config={
                             'displayModeBar': False
                         }
-            ),
-            html.P(
-                "Team Search"
-            ),
-            dcc.Dropdown(
-                id = 'team-search-dropdown',
-                style = {'width' : "40%", 
-                        'height' : "28px",
-                        'font-size': '15px',
-                        'display' : 'inline-block',
-                        'marginBottom' : '5px'
-                        },
-                multi = True,
-                options = [
-                    {'label':'Select Category and Year', 'value': None}],
             ),
 ]
 #content for team comparison   
@@ -683,26 +667,22 @@ def update_category_dropdown(pathname):
 
 #populate search dropdowns
 @app.callback(
-    Output(component_id = 'player-search-dropdown', component_property = 'options'),
-    Output(component_id = 'team-search-dropdown', component_property = 'options'),
+    Output(component_id = 'search-dropdown', component_property = 'options'),
     Input(component_id = 'category_dropdown', component_property = 'value'),
     Input(component_id = 'year', component_property = 'value'),
-    Input(component_id= 'url', component_property= 'pathname'),
+    Input(component_id= 'url', component_property= 'pathname')
 )
 def pop_search_dropdown(category, years, pathname):
-    print('triggered')
     if pathname in ['/', '/player-statistics']:
         df = player_df_dict[category]
         dff = df[df['Year'].isin(years)]
         player_options = [{'label': name, 'value' : name} for name in dff['Player'].unique()]
-        team_options = [{'label': 'No Year Selected', 'value' : None}]
-        return player_options, team_options
+        return player_options
     elif pathname in ['/team-statistics']:
         df = merged_df_dict[category]
         dff = df[df['Year'].isin(years)]
-        player_options = [{'label': 'No Year Selected', 'value' : None}]
         team_options = [{'label': team, 'value' : team} for team in dff['Tm'].unique()]
-        return player_options, team_options
+        return team_options
 
 #create callback for x-axis data using columns of selected category
 @app.callback(
@@ -721,9 +701,9 @@ def columns_for_df(selected_category, pathname):
 @app.callback(
     Output(component_id = 'x-axis-range', component_property = 'min'),
     Output(component_id = 'x-axis-range', component_property = 'max'),
-    Output(component_id = 'x-axis-range', component_property = 'value'),
     Output(component_id = 'x-axis-range', component_property = 'step'),
     Output(component_id = 'x-axis-range', component_property = 'marks'),
+    Output(component_id = 'x-axis-range', component_property = 'value'),
     Input(component_id = 'category_dropdown', component_property = 'value'),
     Input(component_id = 'year', component_property = 'value'),
     Input(component_id = 'x-axis', component_property = 'value'),
@@ -744,7 +724,7 @@ def update_range_slider(selected_category, years, x_axis_col, pathname):
         int(df.min()): '{}'.format(df.min()),
         int(df.max()): '{}'.format(df.max())
     }
-    return df.min(), df.max(), value, step, marks
+    return df.min(), df.max(), step, marks, value
 
 #create callback for y-axis data using columns of selected category
 @app.callback(
@@ -762,9 +742,9 @@ def columns_for_df(selected_category, pathname):
 @app.callback(
     Output(component_id = 'y-axis-range', component_property = 'min'),
     Output(component_id = 'y-axis-range', component_property = 'max'),
-    Output(component_id = 'y-axis-range', component_property = 'value'),
     Output(component_id = 'y-axis-range', component_property = 'step'),
     Output(component_id = 'y-axis-range', component_property = 'marks'),
+    Output(component_id = 'y-axis-range', component_property = 'value'),
     Input(component_id = 'category_dropdown', component_property = 'value'),
     Input(component_id = 'year', component_property = 'value'),
     Input(component_id = 'y-axis', component_property = 'value'),
@@ -785,7 +765,7 @@ def update_range_slider(selected_category, years, y_axis_col, pathname):
         int(df.min()): '{}'.format(df.min()),
         int(df.max()): '{}'.format(df.max())
     }
-    return df.min(), df.max(), value, step, marks
+    return df.min(), df.max(), step, marks, value
 
 #create callback for color using columns of selected category
 @app.callback(
@@ -834,9 +814,10 @@ def columns_for_df(selected_category, pathname):
     Input(component_id = 'color', component_property = 'value'),
     Input(component_id = 'size', component_property = 'value'),
     Input(component_id = 'clear-button' , component_property = 'n_clicks'),
-    Input(component_id= 'url', component_property= 'pathname')
+    Input(component_id= 'url', component_property= 'pathname'),
+    Input(component_id= 'search-dropdown', component_property='value')
 )
-def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis_values, color, size, n_clicks, pathname):
+def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis_values, color, size, n_clicks, pathname, search):
     if pathname in ['/', '/player-statistics', '/team-statistics']:
         fig_blank = px.scatter()
         fig_blank.update_layout(
@@ -865,15 +846,18 @@ def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis
         df = df[df[x_axis] <= x_axis_values[1]]
         df = df[df[y_axis] >= y_axis_values[0]]
         df = df[df[y_axis] <= y_axis_values[1]]
-
+    
+        if size in [None] and color not in [None] and df[color].min() > 0:
+            size = color
+        
         fig = px.scatter(
             df,
             x = x_axis, y = y_axis, 
             hover_name = hover_name, hover_data = hover_data,
             title = 'NFL {} {} Stats <br>   Year(s):{}<br>  {} against {}'.format(player_team, selected_category.title(), years, x_axis.title(), y_axis.title()),
-            color = color, size = color,
+            color = color, size = size,
             text = 'split',
-            color_continuous_scale='blackbody_r'
+            color_continuous_scale=px.colors.sequential.Blackbody_r[0:4]
         )
 
         fig.update_layout(
@@ -881,6 +865,14 @@ def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis
             paper_bgcolor = 'rgba(0, 0, 0, 0)',
             font_color=colors['text']
         )
+        if search not in [None]:
+            for name in search:
+                fig.add_annotation(
+                    x=df.set_index(hover_name).loc[name.rstrip(' ')][x_axis], 
+                    y=df.set_index(hover_name).loc[name.rstrip(' ')][y_axis],
+                    text="{}".format(name),
+                    font = {'color' : 'blue'}
+                )
         if n_clicks == None:
             if pathname in ['/team-statistics']:
                 fig.add_hline(
@@ -953,7 +945,7 @@ def update_compare_figures(year_1, year_2, team_1_name, team_2_name, pass_x, pas
         color = pass_x,
         size = pass_y,
         text = 'Tm',
-        color_continuous_scale='blackbody_r'
+        color_continuous_scale=px.colors.sequential.Blackbody_r[0:4]
     )
     pass_fig.update_layout(
         plot_bgcolor = 'rgba(0, 0, 0, 0)',
@@ -985,7 +977,7 @@ def update_compare_figures(year_1, year_2, team_1_name, team_2_name, pass_x, pas
         color = rush_x,
         size = rush_y,
         text = 'Tm',
-        color_continuous_scale='blackbody_r'
+        color_continuous_scale=px.colors.sequential.Blackbody_r[0:4]
     )
     rush_fig.update_layout(
         plot_bgcolor = 'rgba(0, 0, 0, 0)',
@@ -1016,7 +1008,7 @@ def update_compare_figures(year_1, year_2, team_1_name, team_2_name, pass_x, pas
         color = drive_x,
         size = drive_y,
         text = 'Tm',
-        color_continuous_scale='blackbody_r'
+        color_continuous_scale=px.colors.sequential.Blackbody_r[0:4]
     )
     drives_fig.update_layout(
         plot_bgcolor = 'rgba(0, 0, 0, 0)',
@@ -1047,7 +1039,7 @@ def update_compare_figures(year_1, year_2, team_1_name, team_2_name, pass_x, pas
         color = ov_x,
         size = ov_y,
         text = 'Tm',
-        color_continuous_scale='blackbody_r'
+        color_continuous_scale=px.colors.sequential.Blackbody_r[0:4]
     )
     team_stats_fig.update_layout(
         plot_bgcolor = 'rgba(0, 0, 0, 0)',
@@ -1077,6 +1069,7 @@ def update_compare_figures(year_1, year_2, team_1_name, team_2_name, pass_x, pas
 
 
 server = app.server
+
 """
 if __name__ == '__main__': 
     app.run_server(debug = False)
