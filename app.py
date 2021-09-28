@@ -805,6 +805,7 @@ def columns_for_df(selected_category, pathname):
     Output(component_id = 'y-axis', component_property = 'value'),
     Output(component_id = 'color', component_property = 'value'),
     Output(component_id = 'size', component_property = 'value'),
+    Output(component_id= 'search-dropdown', component_property='value'),
     Input(component_id = 'category_dropdown', component_property = 'value'),
     Input(component_id = 'year', component_property = 'value'),
     Input(component_id = 'x-axis', component_property = 'value'),
@@ -827,7 +828,7 @@ def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis
         )
         
         if n_clicks != None:
-            return fig_blank, None, None, [None], None, None, None, None 
+            return fig_blank, None, None, [None], None, None, None, None, [None] 
         if pathname == '/team-statistics':
             df = merged_df_dict[selected_category]
             player_team = 'Team'
@@ -883,7 +884,7 @@ def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis
                     x = df[x_axis].mean(),
                     line_width=1, line_dash="dash"
                 )
-                return fig, None, selected_category, years, x_axis, y_axis, color, size
+                return fig, None, selected_category, years, x_axis, y_axis, color, size, search
             elif pathname in ['/player-statistics', '/']:
                 fig.add_hline(
                     y = df[y_axis].mean(),
@@ -893,7 +894,7 @@ def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis
                     x = df[x_axis].mean(),
                     line_width=1, line_dash="dash"
                 )
-                return fig, None, selected_category, years, x_axis, y_axis, color, size
+                return fig, None, selected_category, years, x_axis, y_axis, color, size, search
 
 #create option list for given year in team comparison
 @app.callback(
@@ -1069,7 +1070,6 @@ def update_compare_figures(year_1, year_2, team_1_name, team_2_name, pass_x, pas
 
 
 server = app.server
-
 """
 if __name__ == '__main__': 
     app.run_server(debug = False)
