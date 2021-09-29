@@ -8,7 +8,6 @@ import numpy as np
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import dash_table
-from PIL import Image
 
 #load csv files in dictionaries for player and merged team data
 def load_df_dict(type, table_ids):
@@ -1149,11 +1148,11 @@ def update_compare_figures(year_1, year_2, team_1_name, team_2_name, pass_x, pas
     return pass_fig, rush_fig, drives_fig, team_stats_fig, columns, data
 
 
-#server = app.server
-
+server = app.server
+"""
 if __name__ == '__main__': 
     app.run_server(debug = False)
-
+"""
 """
 To Do List
 Sliders show value for chosen number
