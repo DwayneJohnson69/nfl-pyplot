@@ -8,6 +8,7 @@ import numpy as np
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import dash_table
+from PIL import Image
 
 #load csv files in dictionaries for player and merged team data
 def load_df_dict(type, table_ids):
@@ -109,14 +110,14 @@ sidebar_individual = [
                             options = [
                                 {'label' : str(year), 'value': year} for year in np.arange(2006,2022,1)
                             ],
-                                style = {'width' : "110%", 
-                                        'height' : "10px",
-                                        'font-size': '10px',
-                                        'display' : 'inline-block',
-                                        'marginBottom' : '70px'
-                                        },
+                            style = {'width' : "110%", 
+                                    'height' : "10px",
+                                    'font-size': '10px',
+                                    'display' : 'inline-block',
+                                    'marginBottom' : '70px'
+                            },
                                 #placeholder = 'Year'
-                            ),
+                ),
 
                 #X-AXIS DATA SELECTION            
                 html.P(
@@ -210,22 +211,6 @@ sidebar_individual = [
 
                 html.P('''
                 '''
-                ),
-                html.P(
-                "Search",
-                    style = {'marginBottom' :'0px'
-                    }
-                ),
-                dcc.Dropdown(
-                    id = 'search-dropdown',
-                    style = {'width' : "95%", 
-                            'height' : "28px",
-                            'font-size': '15px',
-                            'marginBottom' : '40px'
-                            },
-                    multi = True,
-                    options = [
-                        {'label':'Select Category and Year', 'value': None}],
                 ),
                 html.Button(
                     'Clear Selections',
@@ -515,15 +500,30 @@ content_player = [
                 pills =  True
             ),
             html.P(
-            "Player Statistics", className="lead", style = {'fontSize' : 50, 'color' : 'black'}
+                "Player Statistics", className="lead", style = {'fontSize' : 50, 'color' : 'black'}
             ),
-
             dcc.Graph(
                     id='graph_1',
                     figure = fig,
-                        config={
+                    config={
                             'displayModeBar': False
-                        }
+                    },
+            ),
+            html.P(
+                "Search",
+                style = {'marginBottom' :'0px'
+                }
+            ),
+            dcc.Dropdown(
+                id = 'search-dropdown',
+                style = {'width' : "95%", 
+                        'height' : "28px",
+                        'font-size': '15px',
+                        'marginBottom' : '40px'
+                        },
+                multi = True,
+                options = [
+                    {'label':'Select Category and Year', 'value': None}],
             ),
 ]
 
@@ -547,6 +547,22 @@ content_team = [
                     config={
                             'displayModeBar': False
                         }
+            ),
+            html.P(
+                "Search",
+                style = {'marginBottom' :'0px'
+                }
+            ),
+            dcc.Dropdown(
+                id = 'search-dropdown',
+                style = {'width' : "95%", 
+                        'height' : "28px",
+                        'font-size': '15px',
+                        'marginBottom' : '40px'
+                        },
+                multi = True,
+                options = [
+                    {'label':'Select Category and Year', 'value': None}],
             ),
 ]
 #content for team comparison   
@@ -703,13 +719,14 @@ def columns_for_df(selected_category, pathname):
     Output(component_id = 'x-axis-range', component_property = 'max'),
     Output(component_id = 'x-axis-range', component_property = 'step'),
     Output(component_id = 'x-axis-range', component_property = 'marks'),
-    Output(component_id = 'x-axis-range', component_property = 'value'),
+    #Output(component_id = 'x-axis-range', component_property = 'value'),
     Input(component_id = 'category_dropdown', component_property = 'value'),
     Input(component_id = 'year', component_property = 'value'),
     Input(component_id = 'x-axis', component_property = 'value'),
-    Input(component_id= 'url', component_property= 'pathname')
+    Input(component_id= 'url', component_property= 'pathname'),
+    Input(component_id = 'x-axis-range', component_property = 'value'),
 )
-def update_range_slider(selected_category, years, x_axis_col, pathname):
+def update_range_slider(selected_category, years, x_axis_col, pathname, values):
     if pathname == '/team-statistics':
         df = merged_df_dict[selected_category]
     else: 
@@ -719,12 +736,29 @@ def update_range_slider(selected_category, years, x_axis_col, pathname):
         step = abs((float(df.max()) / float(df.min())) / 100)
     else: 
         step = abs(float(df.max())/ 100)
-    value = [float(df.min()), float(df.max())]
+    #value = [float(df.min()), float(df.max())]
     marks = {
         int(df.min()): '{}'.format(df.min()),
-        int(df.max()): '{}'.format(df.max())
+        int(df.max()): '{}'.format(df.max()),
+        int(values[0]) : '{}'.format(int(values[0])),
+        int(values[1]) : '{}'.format(int(values[1])),   
     }
-    return df.min(), df.max(), step, marks, value
+    return df.min(), df.max(), step, marks#, value
+@app.callback(
+    Output(component_id = 'x-axis-range', component_property = 'value'),
+    Input(component_id = 'category_dropdown', component_property = 'value'),
+    Input(component_id = 'year', component_property = 'value'),
+    Input(component_id = 'x-axis', component_property = 'value'),
+    Input(component_id= 'url', component_property= 'pathname')
+)
+def x_range_min_max(selected_category, years, x_axis_col, pathname):
+    if pathname == '/team-statistics':
+        df = merged_df_dict[selected_category]
+    else: 
+        df = player_df_dict[selected_category]
+    df = df[df['Year'].isin(years)][x_axis_col]
+    value = [float(df.min()), float(df.max())]
+    return value
 
 #create callback for y-axis data using columns of selected category
 @app.callback(
@@ -744,13 +778,14 @@ def columns_for_df(selected_category, pathname):
     Output(component_id = 'y-axis-range', component_property = 'max'),
     Output(component_id = 'y-axis-range', component_property = 'step'),
     Output(component_id = 'y-axis-range', component_property = 'marks'),
-    Output(component_id = 'y-axis-range', component_property = 'value'),
+    #Output(component_id = 'y-axis-range', component_property = 'value'),
     Input(component_id = 'category_dropdown', component_property = 'value'),
     Input(component_id = 'year', component_property = 'value'),
     Input(component_id = 'y-axis', component_property = 'value'),
-    Input(component_id= 'url', component_property= 'pathname')
+    Input(component_id= 'url', component_property= 'pathname'),
+    Input(component_id = 'y-axis-range', component_property = 'value')
 )
-def update_range_slider(selected_category, years, y_axis_col, pathname):
+def update_range_slider(selected_category, years, y_axis_col, pathname, values):
     if pathname == '/team-statistics':
         df = merged_df_dict[selected_category]
     else: 
@@ -760,12 +795,29 @@ def update_range_slider(selected_category, years, y_axis_col, pathname):
         step = abs((float(df.max()) / float(df.min())) / 100)
     else: 
         step = abs(float(df.max())/ 100)
-    value = [float(df.min()), float(df.max())]
+    #value = [float(df.min()), float(df.max())]
     marks = {
         int(df.min()): '{}'.format(df.min()),
-        int(df.max()): '{}'.format(df.max())
+        int(df.max()): '{}'.format(df.max()),
+        int(values[0]) : '{}'.format(int(values[0])),
+        int(values[1]) : '{}'.format(int(values[1])),   
     }
-    return df.min(), df.max(), step, marks, value
+    return df.min(), df.max(), step, marks#, value
+@app.callback(
+    Output(component_id = 'y-axis-range', component_property = 'value'),
+    Input(component_id = 'category_dropdown', component_property = 'value'),
+    Input(component_id = 'year', component_property = 'value'),
+    Input(component_id = 'y-axis', component_property = 'value'),
+    Input(component_id= 'url', component_property= 'pathname')
+)
+def x_range_min_max(selected_category, years, y_axis_col, pathname):
+    if pathname == '/team-statistics':
+        df = merged_df_dict[selected_category]
+    else:
+        df = player_df_dict[selected_category]
+    df = df[df['Year'].isin(years)][y_axis_col]
+    value = [float(df.min()), float(df.max())]
+    return value
 
 #create callback for color using columns of selected category
 @app.callback(
@@ -796,16 +848,18 @@ def columns_for_df(selected_category, pathname):
         return [{'label' : col, 'value': col} for col in df.columns[3:] if col not in ['Pos','G','GS']]
 
 #plot scatter figure based on inputted variables
+"""
+Output(component_id = 'clear-button' , component_property = 'n_clicks'),
+Output(component_id = 'category_dropdown', component_property = 'value'),
+Output(component_id = 'year', component_property = 'value'),
+Output(component_id = 'x-axis', component_property = 'value'),
+Output(component_id = 'y-axis', component_property = 'value'),
+Output(component_id = 'color', component_property = 'value'),
+Output(component_id = 'size', component_property = 'value'),
+Output(component_id= 'search-dropdown', component_property='value'),
+"""
 @app.callback(
     Output(component_id = 'graph_1', component_property = 'figure'),
-    Output(component_id = 'clear-button' , component_property = 'n_clicks'),
-    Output(component_id = 'category_dropdown', component_property = 'value'),
-    Output(component_id = 'year', component_property = 'value'),
-    Output(component_id = 'x-axis', component_property = 'value'),
-    Output(component_id = 'y-axis', component_property = 'value'),
-    Output(component_id = 'color', component_property = 'value'),
-    Output(component_id = 'size', component_property = 'value'),
-    Output(component_id= 'search-dropdown', component_property='value'),
     Input(component_id = 'category_dropdown', component_property = 'value'),
     Input(component_id = 'year', component_property = 'value'),
     Input(component_id = 'x-axis', component_property = 'value'),
@@ -819,23 +873,24 @@ def columns_for_df(selected_category, pathname):
     Input(component_id= 'search-dropdown', component_property='value')
 )
 def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis_values, color, size, n_clicks, pathname, search):
+    print(n_clicks)
+    fig_blank = px.scatter()
+    fig_blank.update_layout(
+        plot_bgcolor = 'rgba(0, 0, 0, 0)',
+        paper_bgcolor = 'rgba(0, 0, 0, 0)',
+        font_color=colors['text'],
+    )
+    if n_clicks not in [None]:
+        #return fig_blank, None, None, [None], None, None, None, None, [None] 
+        return fig_blank
     if pathname in ['/', '/player-statistics', '/team-statistics']:
-        fig_blank = px.scatter()
-        fig_blank.update_layout(
-            plot_bgcolor = 'rgba(0, 0, 0, 0)',
-            paper_bgcolor = 'rgba(0, 0, 0, 0)',
-            font_color=colors['text'],
-        )
-        
-        if n_clicks != None:
-            return fig_blank, None, None, [None], None, None, None, None, [None] 
-        if pathname == '/team-statistics':
+        if pathname in ['/team-statistics']:
             df = merged_df_dict[selected_category]
             player_team = 'Team'
             hover_name = 'Tm'
             hover_data = ['Year']
             df['split'] = df['Tm'].str.split().str[-1]
-        else:
+        elif pathname in ['/', '/player-statistics']:
             df = player_df_dict[selected_category]
             player_team = 'Player'
             hover_name = 'Player'
@@ -848,17 +903,17 @@ def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis
         df = df[df[y_axis] >= y_axis_values[0]]
         df = df[df[y_axis] <= y_axis_values[1]]
     
-        if size in [None] and color not in [None] and df[color].min() > 0:
+        if color not in [None] and size in [None] and df[color].min() > 0:
             size = color
         
         fig = px.scatter(
             df,
             x = x_axis, y = y_axis, 
             hover_name = hover_name, hover_data = hover_data,
-            title = 'NFL {} {} Stats <br>   Year(s):{}<br>  {} against {}'.format(player_team, selected_category.title(), years, x_axis.title(), y_axis.title()),
+            title = 'NFL {} {} Stats: {} against {}<br>Year(s):{}'.format(player_team, selected_category.title(), x_axis.title(), y_axis.title(), years),
             color = color, size = size,
             text = 'split',
-            color_continuous_scale=px.colors.sequential.Blackbody_r[0:4]
+            color_continuous_scale=px.colors.sequential.Blackbody_r[0:2].append(px.colors.sequential.Blackbody_r[3])
         )
 
         fig.update_layout(
@@ -867,13 +922,20 @@ def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis
             font_color=colors['text']
         )
         if search not in [None]:
-            for name in search:
-                fig.add_annotation(
-                    x=df.set_index(hover_name).loc[name.rstrip(' ')][x_axis], 
-                    y=df.set_index(hover_name).loc[name.rstrip(' ')][y_axis],
-                    text="{}".format(name),
-                    font = {'color' : 'blue'}
-                )
+            try: 
+                for name in search:
+                    fig.add_annotation(
+                        x=df.set_index(hover_name).loc[name.rstrip(' ')][x_axis], 
+                        y=df.set_index(hover_name).loc[name.rstrip(' ')][y_axis],
+                        text="{}".format(name),
+                        font = {'color' : px.colors.sequential.Blackbody_r[3],
+                                'size' : 14},
+                        showarrow = True,
+                        arrowsize = 5,
+                        arrowcolor = px.colors.sequential.Blackbody_r[3],
+                    )
+            except Exception:
+                pass
         if n_clicks == None:
             if pathname in ['/team-statistics']:
                 fig.add_hline(
@@ -884,17 +946,35 @@ def update_graph(selected_category, years, x_axis, x_axis_values, y_axis, y_axis
                     x = df[x_axis].mean(),
                     line_width=1, line_dash="dash"
                 )
-                return fig, None, selected_category, years, x_axis, y_axis, color, size, search
+                #return fig, None, selected_category, years, x_axis, y_axis, color, size, search
+                return fig
             elif pathname in ['/player-statistics', '/']:
                 fig.add_hline(
                     y = df[y_axis].mean(),
                     line_width=1, line_dash="dash"
-                )   
+                )
                 fig.add_vline(
                     x = df[x_axis].mean(),
                     line_width=1, line_dash="dash"
                 )
-                return fig, None, selected_category, years, x_axis, y_axis, color, size, search
+                #return fig, None, selected_category, years, x_axis, y_axis, color, size, search
+            return fig
+
+@app.callback(
+    Output(component_id = 'clear-button' , component_property = 'n_clicks'),
+    Output(component_id = 'category_dropdown', component_property = 'value'),
+    Output(component_id = 'year', component_property = 'value'),
+    Output(component_id = 'x-axis', component_property = 'value'),
+    Output(component_id = 'y-axis', component_property = 'value'),
+    Output(component_id = 'color', component_property = 'value'),
+    Output(component_id = 'size', component_property = 'value'),
+    Output(component_id= 'search-dropdown', component_property='value'),
+    #Output(component_id = 'graph_1', component_property = 'figure'),
+    Input(component_id = 'clear-button' , component_property = 'n_clicks'),
+)
+def clear_button(n_clicks):
+    if n_clicks not in [None]:
+        return None, None, [None], None, None, None, None, [None]#, fig_blank
 
 #create option list for given year in team comparison
 @app.callback(
@@ -946,7 +1026,7 @@ def update_compare_figures(year_1, year_2, team_1_name, team_2_name, pass_x, pas
         color = pass_x,
         size = pass_y,
         text = 'Tm',
-        color_continuous_scale=px.colors.sequential.Blackbody_r[0:4]
+        color_continuous_scale=px.colors.sequential.Blackbody_r[0:2].append(px.colors.sequential.Blackbody_r[3])
     )
     pass_fig.update_layout(
         plot_bgcolor = 'rgba(0, 0, 0, 0)',
@@ -978,7 +1058,7 @@ def update_compare_figures(year_1, year_2, team_1_name, team_2_name, pass_x, pas
         color = rush_x,
         size = rush_y,
         text = 'Tm',
-        color_continuous_scale=px.colors.sequential.Blackbody_r[0:4]
+        color_continuous_scale=px.colors.sequential.Blackbody_r[0:2].append(px.colors.sequential.Blackbody_r[3])
     )
     rush_fig.update_layout(
         plot_bgcolor = 'rgba(0, 0, 0, 0)',
@@ -1009,7 +1089,7 @@ def update_compare_figures(year_1, year_2, team_1_name, team_2_name, pass_x, pas
         color = drive_x,
         size = drive_y,
         text = 'Tm',
-        color_continuous_scale=px.colors.sequential.Blackbody_r[0:4]
+        color_continuous_scale=px.colors.sequential.Blackbody_r[0:2].append(px.colors.sequential.Blackbody_r[3])
     )
     drives_fig.update_layout(
         plot_bgcolor = 'rgba(0, 0, 0, 0)',
@@ -1040,7 +1120,7 @@ def update_compare_figures(year_1, year_2, team_1_name, team_2_name, pass_x, pas
         color = ov_x,
         size = ov_y,
         text = 'Tm',
-        color_continuous_scale=px.colors.sequential.Blackbody_r[0:4]
+        color_continuous_scale=px.colors.sequential.Blackbody_r[0:2].append(px.colors.sequential.Blackbody_r[3])
     )
     team_stats_fig.update_layout(
         plot_bgcolor = 'rgba(0, 0, 0, 0)',
@@ -1069,11 +1149,11 @@ def update_compare_figures(year_1, year_2, team_1_name, team_2_name, pass_x, pas
     return pass_fig, rush_fig, drives_fig, team_stats_fig, columns, data
 
 
-server = app.server
-"""
+#server = app.server
+
 if __name__ == '__main__': 
     app.run_server(debug = False)
-"""
+
 """
 To Do List
 Sliders show value for chosen number
